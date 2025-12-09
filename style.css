@@ -10,6 +10,10 @@
     --background-color:#212121;
     --text-color:#FFFFFF;
     --font: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+    --snake-color :rgb(217, 240, 10);
+    --food-color:red;
+    --board:rgb(153, 151, 151);
+    --block:rgb(110, 110, 110);
 }
 
 
@@ -22,19 +26,56 @@ body{
     background-color: var(--background-color);
     font-family: var(--font);
     color: var(--text-color);
+    padding: 1rem;
 }
 
-
+main{
+    height: 100%;
+    width: 100%;
+    display: flex;
+    gap: 1.5rem;
+}
 
 .top{
+    width: 100%;
+    height: 100%;
     display: flex;
-    padding: 1.5rem;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.top .info{
+    display: flex;
+    width: 100%;
     justify-content: space-around;
 }
 
-.top .item{
+.top .info .item{
     padding: 1rem;
     border-radius: 15px;
     text-transform: uppercase;
     border: 2px solid white;
+}
+
+.gameArea{
+    display:grid;
+    width: 90%;
+    flex-grow: 1;
+    border: 2px solid rgb(153, 151, 151);
+    grid-template-columns: repeat(auto-fill,minmax(50px,1fr));
+    grid-template-rows: repeat(auto-fill,minmax(50px,1fr));
+}
+.gameArea .block{
+    border: 1px solid rgb(110, 110, 110);
+    aspect-ratio: 1/1;
+    width: 50px;
+}
+
+
+.snake{
+    background-color: var(--snake-color);
+}
+.food{
+    background-color: var(--food-color);
 }
