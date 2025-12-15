@@ -1,14 +1,33 @@
+// Game board and score element
 const gameArea = document.querySelector(".gameArea");
+const score = document.querySelector(".score");
+const time = document.querySelector(".time").innerHTML.split(":")
+
+
+// Scores variables
+const highscore = document.querySelector(".high-score");
+let highScoreText = highscore.innerHTML.split(":");
+let scoreText = score.innerHTML.split(":");
+let currentScore = 0;
+
+// Row and cols of the board
 const rows = Math.floor(gameArea.clientHeight / 50);
 const cols = Math.floor(gameArea.clientWidth / 50);
+
+let now = new Date();
+
+let minutes = now.getMinutes() - now.getMinutes();
+let seconds = now.getSeconds() -  now.getSeconds();
+
+
+
 const blocks = [];
 let direction = null;
-let current = {
+let snake = {
   head: {
     x: 1,
     y: 1,
   },
-  body: []
 };
 
 let previous = {
@@ -21,10 +40,10 @@ let previous = {
 
 let food = generateFood();
 
-function initalSteup() {
-  createGrid();
-  gameControls();
-  blocks[food.row][food.col].classList.add("food")
+function initalSteup(){
+    createGrid();
+    gameControls();
+    blocks[food.row][food.col].classList.add("food")
 }
 
 function createGrid() {
@@ -39,79 +58,54 @@ function createGrid() {
   }
 }
 
+function changeDirection(newDirection) {
+  if (newDirection !== oppDirection[direction]) {
+    direction = newDirection;
+  }
+}
+
 function gameControls() {
   window.addEventListener("keydown", (e) => {
-    if (e.key === "w" || e.key === "ArrowUp") direction = "Up";
-    if (e.key === "s" || e.key === "ArrowDown") direction = "Down";
-    if (e.key === "a" || e.key === "ArrowLeft") direction = "Left";
-    if (e.key === "d" || e.key === "ArrowRight") direction = "Right";
+    if (e.key === "w" || e.key === "ArrowUp") changeDirection("Up");
+    if (e.key === "s" || e.key === "ArrowDown") changeDirection("Down");
+    if (e.key === "a" || e.key === "ArrowLeft") changeDirection("Left");
+    if (e.key === "d" || e.key === "ArrowRight") changeDirection("Right");
+
     if (direction != null) {
       if (e.key === "Enter") {
         clearInterval(id);
+        clearInterval(timerid)
         alert("game exited");
       }
     }
   });
 }
 
-function generateFood() {
-  const foodRow = Math.floor(Math.random() * rows);
-  const foodCol = Math.floor(Math.random() * cols);
-  return {
-    row: foodRow,
-    col: foodCol
-  };
+function generateFood(){
+    const foodRow = Math.floor(Math.random() * rows);
+    const foodCol = Math.floor(Math.random() * cols);
+     return  {
+        row:foodRow,
+        col:foodCol
+    };
 }
 
 function renderSnake() {
-  previous.head.x = current.head.x;
-  previous.head.y = current.head.y;
-
- 
-
-  if(current.body.length>0){
-  previous.body[0].x = current.body[0].x
-  previous.body[0].y = current.body[0].y
-
-    if (direction === "Up") current.body[0].x -= 1;
-  if (direction === "Down") current.body[0].x += 1;
-  if (direction === "Left") current.body[0].y -= 1;
-  if (direction === "Right") current.body[0].y += 1;
-
-  }
-
-  if (direction === "Up") current.head.x -= 1;
-  if (direction === "Down") current.head.x += 1;
-  if (direction === "Left") current.head.y -= 1;
-  if (direction === "Right") current.head.y += 1;
-
+  let intial = {x:snake.head.x, y:snake.head.y};
+  if (direction === "Up") snake.head.x -= 1;
+  if (direction === "Down") snake.head.x += 1;
+  if (direction === "Left") snake.head.y -= 1;
+  if (direction === "Right") snake.head.y += 1;
 
   // Snake Render
-  blocks[current.head.x][current.head.y].classList.add("snake");
-  blocks[previous.head.x][previous.head.y].classList.remove("snake");
-
-  if(current.body.length>0){
-
-  blocks[current.body[0].x][current.body[0].y].classList.add("snake");
-  blocks[previous.body[0].x][previous.body[0].y].classList.remove("snake");
-  }
-
+  blocks[snake.head.x][snake.head.y].classList.add("snake");
+  blocks[intial.x][intial.y].classList.remove("snake");
 
   // Food Render after consumed
-  if (blocks[current.head.x][current.head.y] === blocks[food.row][food.col]) {
+  if(blocks[snake.head.x][snake.head.y] === blocks[food.row][food.col]){
     blocks[food.row][food.col].classList.remove("food")
     food = generateFood();
     blocks[food.row][food.col].classList.add("food")
-
-
-   
-       current.body.push({x:previous.head.x,y:previous.head.y});
-       previous.body.push({x:previous.head.x,y:previous.head.y});
-
-  
-
-
-    console.log(current,previous)
   }
 
 }
@@ -123,3 +117,7 @@ let id = setInterval(() => {
     renderSnake();
   }
 }, 300);
+
+let timerid = setInterval(
+  startTimer
+,1000)
